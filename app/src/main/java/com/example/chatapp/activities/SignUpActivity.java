@@ -91,7 +91,8 @@ private String encodeImage;
 
                     loading(false);
                     preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
-                    preferenceManager.putString(Constants.KEY_NAME, binding.inputFirstName.getText().toString());
+                    preferenceManager.putString(Constants.KEY_FIRST_NAME, binding.inputFirstName.getText().toString());
+
                     preferenceManager.putString(Constants.KEY_IMAGE, encodeImage);
 
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
