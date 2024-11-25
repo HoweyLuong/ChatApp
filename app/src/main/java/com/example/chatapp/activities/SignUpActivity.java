@@ -80,7 +80,8 @@ private String encodeImage;
         //Post to Firebase
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         HashMap<String,String> user = new HashMap<>();
-        user.put(Constants.KEY_NAME,binding.inputName.getText().toString());
+        user.put(Constants.KEY_FIRST_NAME,binding.inputFirstName.getText().toString());
+        user.put(Constants.KEY_LAST_NAME,binding.inputLastName.getText().toString());
         user.put(Constants.KEY_EMAIL,binding.inputEmail.getText().toString());
         user.put(Constants.KEY_PASSWORD,binding.inputPassowrd.getText().toString());
         user.put(Constants.KEY_IMAGE, encodeImage);
@@ -90,7 +91,7 @@ private String encodeImage;
 
                     loading(false);
                     preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
-                    preferenceManager.putString(Constants.KEY_NAME, binding.inputName.getText().toString());
+                    preferenceManager.putString(Constants.KEY_NAME, binding.inputFirstName.getText().toString());
                     preferenceManager.putString(Constants.KEY_IMAGE, encodeImage);
 
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
@@ -146,8 +147,11 @@ private String encodeImage;
             showToast("Please select your image");
             return  false;
         }
-        if(binding.inputName.getText().toString().trim().isEmpty()){
-            showToast("Please enter your Name");
+        if(binding.inputFirstName.getText().toString().trim().isEmpty()) {
+            showToast("Please enter your First Name");
+            return false;
+        }else if (binding.inputLastName.getText().toString().trim().isEmpty()) {
+            showToast("Please enter your Last Name");
             return false;
         }else if(binding.inputEmail.getText().toString().trim().isEmpty()){
             showToast(("Please enter your Email"));
