@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.chatapp.adapters.UsersAdapter;
 import com.example.chatapp.databinding.ActivityUserBinding;
+import com.example.chatapp.listeners.UserListener;
 import com.example.chatapp.models.User;
 import com.example.chatapp.utilities.Constants;
 import com.example.chatapp.utilities.PreferenceManager;
@@ -16,7 +17,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class userActivity extends AppCompatActivity {
+public class userActivity extends AppCompatActivity implements UserListener {
 
     private ActivityUserBinding binding;
     private PreferenceManager preferenceManager;
@@ -61,7 +62,7 @@ public class userActivity extends AppCompatActivity {
                         }
 
                         if(users.size() > 0) {
-                            UsersAdapter usersAdapter = new UsersAdapter(users);
+                            UsersAdapter usersAdapter = new UsersAdapter(users, this);
                             binding.userRecyclerView.setAdapter(usersAdapter);
                             binding.userRecyclerView.setVisibility(View.VISIBLE);
 
@@ -86,5 +87,10 @@ public class userActivity extends AppCompatActivity {
         }else {
             binding.progressBar.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public void onUserClicked(User user) {
+        //TODO
     }
 }
