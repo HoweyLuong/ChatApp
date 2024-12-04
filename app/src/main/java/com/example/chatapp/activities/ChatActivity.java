@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +26,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +54,7 @@ public class ChatActivity extends AppCompatActivity {
         loadReceiverDetails();
         setListener();
         init();
+        ListenMessage();
 
 
     }
@@ -85,6 +89,24 @@ public class ChatActivity extends AppCompatActivity {
     }
 
 
+    private void ListenMessage() {
+        database.collection(Constants.KEY_COLLECTION_CHAT)
+                .whereEqualTo(Constants.KEY_SENDER_ID,
+                        preferenceManager.getString(Constants.KEY_USER_ID))
+                .whereEqualTo(Constants.KEY_RECEIVER_ID,receiverUser.id)
+                .addSnapshotListener(eventListener);
+
+
+        database.collection(Constants.KEY_COLLECTION_CHAT)
+                .whereEqualTo(Constants.KEY_SENDER_ID,
+                        receiverUser.id)
+                .whereEqualTo(Constants.KEY_RECEIVER_ID,
+                        preferenceManager.getString(Constants.KEY_USER_ID))
+                .addSnapshotListener(eventListener);
+
+    }
+
+
     private final EventListener<QuerySnapshot> eventListener = ((value, error) ->  {
         if (error != null) {
             return;
@@ -95,9 +117,28 @@ public class ChatActivity extends AppCompatActivity {
                 if(documentChange.getType() == DocumentChange.Type.ADDED) {
                     ChatMessage chatMessage = new ChatMessage();
                     chatMessage.senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
+                    chatMessage.receiverId = documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID);
+                    chatMessage.message = documentChange.getDocument().getString(Constants.KEY_MESSAGE);
+                    chatMessage.dateTime = getReadableDateTime(
+                            documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP));
+
+                    chatMessage.dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
+
+
+                    chatMessages.add(chatMessage);
                 }
             }
+            Collections.sort(chatMessages, (obj1, obj2) -> obj1.dateObject.compareTo(obj2.dateObject));
+            if (count == 0) {
+                chatAdapter.notifyDataSetChanged();
+            }else {
+                chatAdapter.notifyItemRangeChanged(chatMessages.size(), chatMessages.size());
+
+                binding.chatRecyclerView.smoothScrollToPosition(chatMessages.size()-1);
+            }
+            binding.chatRecyclerView.setVisibility(View.VISIBLE);
         }
+        binding.chatRecyclerView.setVisibility(View.GONE);
     });
 
 
