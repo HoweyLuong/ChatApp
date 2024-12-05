@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 
 import androidx.activity.EdgeToEdge;
@@ -132,39 +133,35 @@ public class ChatActivity extends AppCompatActivity {
      * Adds new messages to the list, sorts them by timestamp, and updates
      * the RecyclerView.
      */
-    private final EventListener<QuerySnapshot> eventListener = ((value, error) ->  {
+    private final EventListener<QuerySnapshot> eventListener = ((value, error) -> {
         if (error != null) {
+
             return;
         }
-        if ( value != null) {
+        if (value != null) {
             int count = chatMessages.size();
-            for (DocumentChange documentChange: value.getDocumentChanges()) {
-                if(documentChange.getType() == DocumentChange.Type.ADDED) {
+            for (DocumentChange documentChange : value.getDocumentChanges()) {
+                if (documentChange.getType() == DocumentChange.Type.ADDED) {
                     ChatMessage chatMessage = new ChatMessage();
                     chatMessage.senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
                     chatMessage.receiverId = documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID);
                     chatMessage.message = documentChange.getDocument().getString(Constants.KEY_MESSAGE);
-                    chatMessage.dateTime = getReadableDateTime(
-                            documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP));
-
+                    chatMessage.dateTime = getReadableDateTime(documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP));
                     chatMessage.dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
-
-
                     chatMessages.add(chatMessage);
                 }
             }
             Collections.sort(chatMessages, (obj1, obj2) -> obj1.dateObject.compareTo(obj2.dateObject));
             if (count == 0) {
                 chatAdapter.notifyDataSetChanged();
-            }else {
-                chatAdapter.notifyItemRangeChanged(chatMessages.size(), chatMessages.size());
-
-                binding.chatRecyclerView.smoothScrollToPosition(chatMessages.size()-1);
+            } else {
+                chatAdapter.notifyItemRangeInserted(count, chatMessages.size() - count);
+                binding.chatRecyclerView.smoothScrollToPosition(chatMessages.size() - 1);
             }
-            binding.chatRecyclerView.setVisibility(View.VISIBLE);
+            binding.chatRecyclerView.setVisibility(chatMessages.isEmpty() ? View.GONE : View.VISIBLE);
         }
-        binding.chatRecyclerView.setVisibility(View.GONE);
     });
+
     /**
      * Decodes a Base64-encoded string to a Bitmap image.
      *
