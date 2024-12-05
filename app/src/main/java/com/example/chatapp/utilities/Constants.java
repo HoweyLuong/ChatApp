@@ -1,8 +1,12 @@
 package com.example.chatapp.utilities;
-
+/**
+ * Constants is a utility class that holds key names used throughout the application.
+ * These keys are used for Firebase Firestore collections, fields, shared preferences,
+ * and other constants to maintain consistency and avoid hardcoding.
+ */
 public class Constants {
     public static final String KEY_COLLECTION_USERS = "User";
-    public static final String KEY_NAME = "name";
+   // public static final String KEY_NAME = "name";
     public static final String KEY_FIRST_NAME = "firstName";
     public static final String KEY_LAST_NAME = "lastName";
 

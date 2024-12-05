@@ -30,28 +30,40 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashMap;
-
+/**
+ * SignUpActivity handles the user registration process.
+ * It allows users to input their details, select a profile image,
+ * and save their information to Firebase Firestore. Successful registration
+ * redirects users to the MainActivity.
+ */
 public class SignUpActivity extends AppCompatActivity {
 private ActivitySignUpBinding binding;
 private PreferenceManager preferenceManager;
 private String encodeImage;
 
+    /**
+     * Called when the activity is starting. Initializes the activity's UI
+     * and sets up event listeners for user interactions.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after
+     *                           previously being shut down, this Bundle contains
+     *                           the most recent data.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_sign_up);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });*/
+
 
         binding = ActivitySignUpBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         preferenceManager = new PreferenceManager(getApplicationContext());
         setListeners();
     }
+
+    /**
+     * Sets click listeners for UI elements such as the "Sign In" text,
+     * the "Sign Up" button, and the profile image selection area.
+     */
 
     private void setListeners() {
 
@@ -69,11 +81,19 @@ private String encodeImage;
         });
     }
 
-
+    /**
+     * Displays a short Toast message on the screen.
+     *
+     * @param message The message to be displayed.
+     */
     private void showToast(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
-
+    /**
+     * Handles the user registration process. Saves the user's details
+     * (including profile picture) to Firebase Firestore and navigates
+     * to MainActivity on success.
+     */
     private void SignUp() {
         //check loading
         loading(true);
@@ -105,6 +125,12 @@ private String encodeImage;
                 });
 
     }
+    /**
+     * Encodes a Bitmap image to a Base64 string for storage.
+     *
+     * @param bitmap The image to encode.
+     * @return The Base64 encoded string of the image.
+     */
     private String encodeImage(Bitmap bitmap) {
         int previewWidth = 150;
         int previewHeight = bitmap.getHeight()*previewWidth / bitmap.getWidth();
@@ -143,6 +169,13 @@ private String encodeImage;
             }
     );
 
+    /**
+     * Validates the user's sign-up details such as name, email, password,
+     * and profile image. Displays appropriate error messages if validation fails.
+     *
+     * @return True if all details are valid, false otherwise.
+     */
+
     private Boolean isValidateSignUpDetails() {
         if (encodeImage == null) {
             showToast("Please select your image");
@@ -174,6 +207,12 @@ private String encodeImage;
         }
     }
 
+    /**
+     * Toggles the visibility of the progress bar and the "Sign Up" button
+     * during the sign-up process.
+     *
+     * @param isLoading True if the process is loading, false otherwise.
+     */
     private void loading(Boolean isLoading) {
         if(isLoading) {
             binding.buttonSignUp.setVisibility(View.INVISIBLE);
